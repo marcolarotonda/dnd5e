@@ -37,3 +37,6 @@ build/
 ### Mac OS ###
 .DS_Store
 /.idea/
+/src/test/resources/application.yaml
+/src/main/resources/application.yaml
+/src/test/resources/application-test.yaml
