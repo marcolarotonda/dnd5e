@@ -1,0 +1,1 @@
+DROP TABLE `dnd5e_test`.`characteristic_value`;
