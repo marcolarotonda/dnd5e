@@ -48,7 +48,6 @@ public class CharacterEntity implements Combatant {
     @Column(name = "alive", nullable = false)
     private Boolean alive;
 
-    @Transient
     @OneToMany(mappedBy = "character")
     private List<CharacteristicValueEntity> characteristicValueEntityList;
 
