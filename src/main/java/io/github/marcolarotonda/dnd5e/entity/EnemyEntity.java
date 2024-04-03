@@ -11,13 +11,19 @@ public class EnemyEntity implements Combatant {
     @Id
     @Column(name = "id")
     private int id;
-    @Basic
-    @Column(name = "name")
-    private String name = "generic_enemy";
-    @Basic
-    @Column(name = "initiative_bonus")
-    private Integer initiativeBonus = 0;
+    @ManyToOne
+    @JoinColumn(name = "`enemy_type_id`", nullable = false)
+    private EnemyTypeEntity enemyType;
     @Basic
     @Column(name = "damage_taken")
     private Integer damageTaken = 0;
+
+
+    public String getName() {
+        return this.getEnemyType().getName();
+    }
+
+    public Integer getInitiativeBonus() {
+        return this.getEnemyType().getInitiativeBonus();
+    }
 }

@@ -1,0 +1,1 @@
+DROP TABLE `dnd5e_test`.`enemy_type`;

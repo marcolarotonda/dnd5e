@@ -26,11 +26,29 @@ public class EntityInitializerUtils {
         return initializeEnemy(5);
     }
 
+    public static EnemyTypeEntity initializeEnemyType() {
+        return initializeEnemyType("Nemico", 5);
+    }
+
+    public static EnemyTypeEntity initializeEnemyType(int initiativeBonus) {
+        return initializeEnemyType("Nemico", initiativeBonus);
+    }
+
+    public static EnemyTypeEntity initializeEnemyType(String name, int initiativeBonus) {
+        EnemyTypeEntity enemyTypeEntity = new EnemyTypeEntity();
+        enemyTypeEntity.setName(name);
+        enemyTypeEntity.setInitiativeBonus(initiativeBonus);
+        return enemyTypeEntity;
+    }
+
     public static EnemyEntity initializeEnemy(int initiativeBonus) {
+        EnemyTypeEntity enemyType = initializeEnemyType(initiativeBonus);
+        return initializeEnemy(enemyType);
+    }
+
+    public static EnemyEntity initializeEnemy(EnemyTypeEntity enemyType) {
         EnemyEntity enemyEntity = new EnemyEntity();
-        enemyEntity.setId(1);
-        enemyEntity.setName("Nemico");
-        enemyEntity.setInitiativeBonus(initiativeBonus);
+        enemyEntity.setEnemyType(enemyType);
         enemyEntity.setDamageTaken(2);
 
         return enemyEntity;

@@ -2,6 +2,7 @@ package io.github.marcolarotonda.dnd5e.service;
 
 import io.github.marcolarotonda.dnd5e.entity.Combatant;
 import io.github.marcolarotonda.dnd5e.entity.EnemyEntity;
+import io.github.marcolarotonda.dnd5e.entity.EnemyTypeEntity;
 import io.github.marcolarotonda.dnd5e.enumeration.CharacteristicEnum;
 import io.github.marcolarotonda.dnd5e.repository.CharacterRepository;
 import io.github.marcolarotonda.dnd5e.entity.CharacterEntity;
@@ -31,13 +32,12 @@ public class ComputeInitiativeService {
     }
 
     public Map<Combatant, Integer> computeInitiativeBonus() {
-        Map<Combatant, Integer> map = computeInitiativeBonusForCharacter();
-        Map<Combatant, Integer> map1 = computeInitiativeBonusForEnemy();
-        map.putAll(map1);
+        Map<Combatant, Integer> map = computeInitiativeBonusForCharacters();
+        //TODO
         return map;
     }
 
-    public Map<Combatant, Integer> computeInitiativeBonusForCharacter() {
+    public Map<Combatant, Integer> computeInitiativeBonusForCharacters() {
 
         List<CharacterEntity> characters = characterRepository.findAllByAliveTrue();
 
@@ -52,13 +52,16 @@ public class ComputeInitiativeService {
                         getInitiativeForCharacter::applyAsInt));
     }
 
-    public Map<Combatant, Integer> computeInitiativeBonusForEnemy() {
+    public Map<EnemyTypeEntity, Integer> computeInitiativeBonusForEnemyTypes() {
 
         List<EnemyEntity> enemies = enemyRepository.findAll();
-        return enemies.stream()
-                .collect(Collectors.toMap(enemy -> enemy,
-                        EnemyEntity::getInitiativeBonus));
-
+        List<EnemyTypeEntity> enemyTypes = enemies.stream()
+                .map(EnemyEntity::getEnemyType)
+                .distinct()
+                .toList();
+        return enemyTypes.stream()
+                .collect(Collectors.toMap(et -> et,
+                        EnemyTypeEntity::getInitiativeBonus));
     }
 
 }

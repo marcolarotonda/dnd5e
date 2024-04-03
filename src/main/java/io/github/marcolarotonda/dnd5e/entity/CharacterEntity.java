@@ -1,7 +1,5 @@
 package io.github.marcolarotonda.dnd5e.entity;
 
-import io.github.marcolarotonda.dnd5e.enumeration.CharacteristicEnum;
-import io.github.marcolarotonda.dnd5e.enumeration.CharacteristicTypeEnum;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -9,7 +7,6 @@ import jakarta.persistence.*;
 
 import java.util.List;
 
-import static java.lang.String.format;
 
 @Entity
 @Setter
