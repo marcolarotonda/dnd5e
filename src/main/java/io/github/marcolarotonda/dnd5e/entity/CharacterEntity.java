@@ -1,5 +1,8 @@
 package io.github.marcolarotonda.dnd5e.entity;
 
+import io.github.marcolarotonda.dnd5e.enumeration.CharacteristicEnum;
+import io.github.marcolarotonda.dnd5e.enumeration.CharacteristicTypeEnum;
+import io.github.marcolarotonda.dnd5e.util.CharacteristicUtils;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -47,6 +50,14 @@ public class CharacterEntity implements Combatant {
 
     @OneToMany(mappedBy = "character")
     private List<CharacteristicValueEntity> characteristicValueEntityList;
+
+    public int getInitiativeModifier() {
+        return CharacteristicUtils.getCharacteristic(this, CharacteristicEnum.DEXTERITY, CharacteristicTypeEnum.TEMPORARY);
+    }
+
+    public Combatant getInitiativeSource() {
+        return this;
+    }
 
 
 }

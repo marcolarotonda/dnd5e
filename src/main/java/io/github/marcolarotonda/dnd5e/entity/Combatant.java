@@ -4,6 +4,8 @@ public interface Combatant {
 
     String getName();
 
-    Integer getInitiativeBonus();
+    int getInitiativeModifier();
+
+    Combatant getInitiativeSource();
 
 }

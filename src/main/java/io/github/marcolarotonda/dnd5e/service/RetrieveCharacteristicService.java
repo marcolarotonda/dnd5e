@@ -3,21 +3,16 @@ package io.github.marcolarotonda.dnd5e.service;
 import io.github.marcolarotonda.dnd5e.entity.CharacterEntity;
 import io.github.marcolarotonda.dnd5e.enumeration.CharacteristicEnum;
 import io.github.marcolarotonda.dnd5e.enumeration.CharacteristicTypeEnum;
+import io.github.marcolarotonda.dnd5e.util.CharacteristicUtils;
 import org.springframework.stereotype.Service;
 
-import static java.lang.String.format;
 
 @Service
 public class RetrieveCharacteristicService {
 
 
     public int getCharacteristic(CharacterEntity character, CharacteristicEnum characteristic, CharacteristicTypeEnum type) {
-        return character.getCharacteristicValueEntityList()
-                .stream()
-                .filter(cve -> cve.getCharacteristic().getName().equals(characteristic))
-                .findFirst()
-                .orElseThrow(() -> new IllegalStateException(format("Characteristic %s not defined for character %s", characteristic, character)))
-                .getValue(type);
+        return CharacteristicUtils.getCharacteristic(character, characteristic, type);
     }
 
     public int getModifier(CharacterEntity character, CharacteristicEnum characteristic) {

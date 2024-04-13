@@ -23,7 +23,12 @@ public class EnemyEntity implements Combatant {
         return this.getEnemyType().getName();
     }
 
-    public Integer getInitiativeBonus() {
-        return this.getEnemyType().getInitiativeBonus();
+
+    public int getInitiativeModifier() {
+        return this.getEnemyType().getInitiativeModifier();
+    }
+
+    public Combatant getInitiativeSource() {
+        return this.getEnemyType();
     }
 }

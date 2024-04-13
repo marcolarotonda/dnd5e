@@ -1,67 +1,111 @@
 package io.github.marcolarotonda.dnd5e.service;
 
-import io.github.marcolarotonda.dnd5e.entity.Combatant;
-import io.github.marcolarotonda.dnd5e.entity.EnemyEntity;
-import io.github.marcolarotonda.dnd5e.entity.EnemyTypeEntity;
-import io.github.marcolarotonda.dnd5e.enumeration.CharacteristicEnum;
+import io.github.marcolarotonda.dicerollerutil.model.RollOption;
+import io.github.marcolarotonda.dnd5e.entity.*;
 import io.github.marcolarotonda.dnd5e.repository.CharacterRepository;
-import io.github.marcolarotonda.dnd5e.entity.CharacterEntity;
 import io.github.marcolarotonda.dnd5e.repository.EnemyRepository;
+import lombok.Getter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.Map;
-import java.util.function.ToIntFunction;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
 public class ComputeInitiativeService {
     private final CharacterRepository characterRepository;
     private final EnemyRepository enemyRepository;
-    private final RetrieveCharacteristicService retrieveCharacteristicService;
+    private final DiceService diceService;
+
+    private Set<EnemyTypeEntity> enemyTypes;
+    private List<Combatant> combatants;
+    private Map<Combatant, Integer> initiativeModifiers;
+    private Map<Combatant, Integer> initiativeRolls;
+    private Map<Combatant, Integer> initiativeRollsExpanded;
+
+    @Getter
+    private List<Map.Entry<Combatant, Integer>> initiativeOrder;
 
 
     @Autowired
     public ComputeInitiativeService(CharacterRepository characterRepository,
-                                    RetrieveCharacteristicService retrieveCharacteristicService,
-                                    EnemyRepository enemyRepository) {
+                                    EnemyRepository enemyRepository,
+                                    DiceService diceService) {
         this.characterRepository = characterRepository;
         this.enemyRepository = enemyRepository;
-        this.retrieveCharacteristicService = retrieveCharacteristicService;
+        this.diceService = diceService;
     }
 
-    public Map<Combatant, Integer> computeInitiativeBonus() {
-        Map<Combatant, Integer> map = computeInitiativeBonusForCharacters();
-        //TODO
-        return map;
+    /***
+     * Calls all the methods needed to calculate initiative
+     */
+    public void execute() {
+        setup();
+        initiativeModifiers = computeInitiativeModifier();
+        initiativeRolls = rollInitiative();
+        initiativeRollsExpanded = expandEnemies();
+        initiativeOrder = assignInitiativeOrder();
     }
 
-    public Map<Combatant, Integer> computeInitiativeBonusForCharacters() {
-
+    /***
+     * Create all the objects needed to calculate initiative
+     */
+    private void setup() {
         List<CharacterEntity> characters = characterRepository.findAllByAliveTrue();
-
-        ToIntFunction<CharacterEntity> getInitiativeForCharacter = character -> {
-            int initiativeBonus = character.getInitiativeBonus();
-            int dexModifier = retrieveCharacteristicService.getModifier(character, CharacteristicEnum.DEXTERITY);
-            return initiativeBonus + dexModifier;
-        };
-
-        return characters.stream()
-                .collect(Collectors.toMap(character -> character,
-                        getInitiativeForCharacter::applyAsInt));
-    }
-
-    public Map<EnemyTypeEntity, Integer> computeInitiativeBonusForEnemyTypes() {
-
         List<EnemyEntity> enemies = enemyRepository.findAll();
-        List<EnemyTypeEntity> enemyTypes = enemies.stream()
+        combatants = new ArrayList<>();
+        combatants.addAll(characters);
+        combatants.addAll(enemyTypes);
+        enemyTypes = enemies.stream()
                 .map(EnemyEntity::getEnemyType)
-                .distinct()
-                .toList();
-        return enemyTypes.stream()
-                .collect(Collectors.toMap(et -> et,
-                        EnemyTypeEntity::getInitiativeBonus));
+                .collect(Collectors.toSet());
     }
+
+    /***
+     * Create a list that represents the initiative order. The first element of the list is the Combatant with the
+     * highest initiative. The order is not relevant for Combatant with identical initiative. This method is called after
+     * expandEnemies()
+     * @return List&lt;Map.Entry&lt;Combatant, Integer&gt;&gt;
+     */
+    private List<Map.Entry<Combatant, Integer>> assignInitiativeOrder() {
+        List<Map.Entry<Combatant, Integer>> initiativeOrderLocal = new ArrayList<>(initiativeRollsExpanded.entrySet());
+        initiativeOrderLocal.sort(Map.Entry.comparingByValue(Comparator.reverseOrder()));
+        return initiativeOrderLocal;
+    }
+
+    /***
+     * Assign the initiative roll to each Character and Enemy.
+     * This method is called after rollInitiative()
+     * @return Map&lt;Combatant, Integer&gt;
+     */
+    private Map<Combatant, Integer> expandEnemies() {
+        return combatants.stream()
+                .collect(Collectors.toMap(combatant -> combatant,
+                        combatant -> initiativeRolls.get(combatant.getInitiativeSource())));
+    }
+
+    /***
+     * Perform the initiative roll for each Character and EnemyType.
+     * This method is called after computeInitiativeModifier()
+     * @return Map&lt;Combatant, Integer&gt;
+     */
+    private Map<Combatant, Integer> rollInitiative() {
+        return initiativeModifiers.entrySet()
+                .stream()
+                .collect(Collectors.toMap(
+                        Map.Entry::getKey,
+                        entry -> diceService.rollGetTotal(RollOption.builder().modifier(entry.getValue()).build())));
+    }
+
+    /***
+     * Assign the initiative modifier to each Character and EnemyType
+     * @return Map&lt;Combatant, Integer&gt;
+     */
+    private Map<Combatant, Integer> computeInitiativeModifier() {
+        return combatants.stream()
+                .collect(Collectors.toMap(combatant -> combatant,
+                        Combatant::getInitiativeModifier));
+    }
+
 
 }

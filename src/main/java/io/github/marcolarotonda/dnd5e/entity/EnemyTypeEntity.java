@@ -8,7 +8,7 @@ import lombok.EqualsAndHashCode;
 @EqualsAndHashCode
 @Entity
 @Table(name = "`enemy_type`")
-public class EnemyTypeEntity {
+public class EnemyTypeEntity implements Combatant {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic
@@ -20,4 +20,13 @@ public class EnemyTypeEntity {
     @Basic
     @Column(name = "`initiative_bonus`")
     private Integer initiativeBonus = 0;
+
+    public int getInitiativeModifier() {
+        return this.initiativeBonus;
+    }
+
+    public Combatant getInitiativeSource() {
+        return this;
+    }
+
 }
