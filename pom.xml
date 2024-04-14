@@ -27,6 +27,7 @@
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <configuration>
+                    <classifier>exec</classifier>
                     <excludes>
                         <exclude>
                             <groupId>org.projectlombok</groupId>
@@ -65,5 +66,13 @@
             <version>0.0.2-SNAPSHOT</version>
         </dependency>
     </dependencies>
+
+    <distributionManagement>
+        <repository>
+            <id>repsy</id>
+            <name>repsy-dnd5e</name>
+            <url>https://repo.repsy.io/mvn/marcolarotonda/dnd5e</url>
+        </repository>
+    </distributionManagement>
 
 </project>
