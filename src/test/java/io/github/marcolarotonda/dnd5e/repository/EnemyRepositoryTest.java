@@ -5,6 +5,7 @@ import io.github.marcolarotonda.dnd5e.entity.EnemyEntity;
 import io.github.marcolarotonda.dnd5e.entity.Combatant;
 import io.github.marcolarotonda.dnd5e.entity.EnemyTypeEntity;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.jdbc.Sql;
@@ -74,26 +75,40 @@ class EnemyRepositoryTest extends RepositoryTest {
         assertThat(damageTaken).isEqualTo(0);
     }
 
-//    @Test
-//    void shouldReturnTwoEnemies() {
-//        EnemyTypeEntity enemyType1 = new EnemyTypeEntity();
-//        enemyType1.setName("goblin");
-//        enemyType1.setInitiativeBonus(2);
-//
-//        EnemyTypeEntity enemyType2 = new EnemyTypeEntity();
-//        enemyType1.setName("troll");
-//        enemyType1.setInitiativeBonus(0);
-//
-//        EnemyEntity enemy1 = initializeEnemy(enemyType1);
-//        EnemyEntity enemy2 = initializeEnemy(enemyType1);
-//        EnemyEntity enemy3 = initializeEnemy(enemyType2);
-//
-//        enemyTypeRepository.saveAll(List.of(enemyType1, enemyType2));
-//        enemyRepository.saveAll(List.of(enemy1, enemy2, enemy3));
-//
-//        var distinctTypes = enemyRepository.findAllDistinct();
-//
-//        assertThat(distinctTypes).hasSize(2);
-//    }
+    @Test
+    @Tag("CurrentTest")
+    void shouldSaveEnemyType() {
+        EnemyTypeEntity enemyType = new EnemyTypeEntity();
+        enemyType.setName("new_enemy_type");
+        EnemyEntity enemy = new EnemyEntity();
+        enemy.setEnemyType(enemyType);
+
+        List<EnemyTypeEntity> enemyTypesBeforeInsert = enemyTypeRepository.findAll();
+
+        enemyRepository.save(enemy);
+
+        List<EnemyTypeEntity> enemyTypesAfterInsert = enemyTypeRepository.findAll();
+
+        assertThat(enemyTypesAfterInsert).hasSize(enemyTypesBeforeInsert.size() + 1);
+    }
+
+    @Test
+    @Tag("CurrentTest")
+    void shouldSaveOnlyOneEnemyType() {
+        EnemyTypeEntity enemyType = new EnemyTypeEntity();
+        enemyType.setName("new_enemy_type");
+        EnemyEntity enemy1 = new EnemyEntity();
+        enemy1.setEnemyType(enemyType);
+        EnemyEntity enemy2 = new EnemyEntity();
+        enemy2.setEnemyType(enemyType);
+
+        List<EnemyTypeEntity> enemyTypesBeforeInsert = enemyTypeRepository.findAll();
+
+        enemyRepository.saveAll(List.of(enemy1, enemy2));
+
+        List<EnemyTypeEntity> enemyTypesAfterInsert = enemyTypeRepository.findAll();
+
+        assertThat(enemyTypesAfterInsert).hasSize(enemyTypesBeforeInsert.size() + 1);
+    }
 
 }

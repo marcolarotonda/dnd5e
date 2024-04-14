@@ -11,7 +11,7 @@ public class EnemyEntity implements Combatant {
     @Id
     @Column(name = "id")
     private int id;
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.PERSIST)
     @JoinColumn(name = "`enemy_type_id`", nullable = false)
     private EnemyTypeEntity enemyType;
     @Basic
