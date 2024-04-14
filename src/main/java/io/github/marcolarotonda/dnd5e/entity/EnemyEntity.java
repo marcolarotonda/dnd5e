@@ -17,6 +17,9 @@ public class EnemyEntity implements Combatant {
     @Basic
     @Column(name = "damage_taken")
     private Integer damageTaken = 0;
+    @Basic
+    @Column(name = "alive")
+    private Boolean alive = true;
 
 
     public String getName() {

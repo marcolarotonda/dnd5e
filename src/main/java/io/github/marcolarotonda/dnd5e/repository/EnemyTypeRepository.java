@@ -15,7 +15,8 @@ public interface EnemyTypeRepository extends JpaRepository<EnemyTypeEntity, Inte
             from `enemy_type`
             where exists (select *
                             from `enemy`
-                            where `enemy`.enemy_type_id = `enemy_type`.id)
+                            where `enemy`.enemy_type_id = `enemy_type`.id
+                            and `enemy`.alive = 1)
              """, nativeQuery = true)
     List<EnemyTypeEntity> findDistinctTypes();
 }
