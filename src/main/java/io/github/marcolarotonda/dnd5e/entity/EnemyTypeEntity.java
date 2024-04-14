@@ -18,12 +18,8 @@ public class EnemyTypeEntity implements Combatant {
     @Column(name = "`name`")
     private String name = "generic_enemy";
     @Basic
-    @Column(name = "`initiative_bonus`")
-    private Integer initiativeBonus = 0;
-
-    public int getInitiativeModifier() {
-        return this.initiativeBonus;
-    }
+    @Column(name = "`initiative_modifier`")
+    private int initiativeModifier = 0;
 
     public Combatant getInitiativeSource() {
         return this;

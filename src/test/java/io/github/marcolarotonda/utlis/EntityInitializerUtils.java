@@ -37,7 +37,7 @@ public class EntityInitializerUtils {
     public static EnemyTypeEntity initializeEnemyType(String name, int initiativeBonus) {
         EnemyTypeEntity enemyTypeEntity = new EnemyTypeEntity();
         enemyTypeEntity.setName(name);
-        enemyTypeEntity.setInitiativeBonus(initiativeBonus);
+        enemyTypeEntity.setInitiativeModifier(initiativeBonus);
         return enemyTypeEntity;
     }
 

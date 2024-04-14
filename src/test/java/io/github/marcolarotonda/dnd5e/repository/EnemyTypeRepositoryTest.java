@@ -4,11 +4,13 @@ import io.github.marcolarotonda.dnd5e.RepositoryTest;
 import io.github.marcolarotonda.dnd5e.entity.EnemyEntity;
 import io.github.marcolarotonda.dnd5e.entity.EnemyTypeEntity;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.jdbc.Sql;
 
 import java.util.List;
+import java.util.Optional;
 
 import static io.github.marcolarotonda.utlis.EntityInitializerUtils.initializeEnemy;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -59,7 +61,7 @@ class EnemyTypeRepositoryTest extends RepositoryTest {
 
         Integer defaultInitiativeBonus = enemyTypeRepository.findById(enemyType.getId())
                 .get()
-                .getInitiativeBonus();
+                .getInitiativeModifier();
         assertThat(defaultInitiativeBonus).isZero();
     }
 
@@ -67,11 +69,11 @@ class EnemyTypeRepositoryTest extends RepositoryTest {
     void shouldReturnTwoTypes() {
         EnemyTypeEntity enemyType1 = new EnemyTypeEntity();
         enemyType1.setName("goblin");
-        enemyType1.setInitiativeBonus(2);
+        enemyType1.setInitiativeModifier(2);
 
         EnemyTypeEntity enemyType2 = new EnemyTypeEntity();
         enemyType1.setName("troll");
-        enemyType1.setInitiativeBonus(0);
+        enemyType1.setInitiativeModifier(0);
 
         EnemyEntity enemy1 = initializeEnemy(enemyType1);
         EnemyEntity enemy2 = initializeEnemy(enemyType1);
@@ -82,6 +84,16 @@ class EnemyTypeRepositoryTest extends RepositoryTest {
 
         List<EnemyTypeEntity> distinctTypes = enemyTypeRepository.findDistinctTypes();
         assertThat(distinctTypes).hasSize(2);
+    }
+
+    @Test
+    @Tag("CurrentTest")
+    void shouldSaveEnemyTypeWithNegativeInitiativeModifier() {
+        enemyType.setInitiativeModifier(-2);
+        enemyTypeRepository.save(enemyType);
+        EnemyTypeEntity enemyTypeSaved = enemyTypeRepository.findById(enemyType.getId()).get();
+        assertThat(enemyTypeSaved.getInitiativeModifier()).isEqualTo(-2);
+
     }
 
 }
