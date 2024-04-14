@@ -4,13 +4,11 @@ import io.github.marcolarotonda.dnd5e.RepositoryTest;
 import io.github.marcolarotonda.dnd5e.entity.EnemyEntity;
 import io.github.marcolarotonda.dnd5e.entity.EnemyTypeEntity;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.jdbc.Sql;
 
 import java.util.List;
-import java.util.Optional;
 
 import static io.github.marcolarotonda.utlis.EntityInitializerUtils.initializeEnemy;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -87,7 +85,6 @@ class EnemyTypeRepositoryTest extends RepositoryTest {
     }
 
     @Test
-    @Tag("CurrentTest")
     void shouldSaveEnemyTypeWithNegativeInitiativeModifier() {
         enemyType.setInitiativeModifier(-2);
         enemyTypeRepository.save(enemyType);

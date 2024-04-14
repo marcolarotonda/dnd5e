@@ -5,7 +5,6 @@ import io.github.marcolarotonda.dnd5e.entity.EnemyEntity;
 import io.github.marcolarotonda.dnd5e.entity.Combatant;
 import io.github.marcolarotonda.dnd5e.entity.EnemyTypeEntity;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.jdbc.Sql;
@@ -76,7 +75,6 @@ class EnemyRepositoryTest extends RepositoryTest {
     }
 
     @Test
-    @Tag("CurrentTest")
     void shouldSaveEnemyType() {
         EnemyTypeEntity enemyType = new EnemyTypeEntity();
         enemyType.setName("new_enemy_type");
@@ -93,7 +91,6 @@ class EnemyRepositoryTest extends RepositoryTest {
     }
 
     @Test
-    @Tag("CurrentTest")
     void shouldSaveOnlyOneEnemyType() {
         EnemyTypeEntity enemyType = new EnemyTypeEntity();
         enemyType.setName("new_enemy_type");
