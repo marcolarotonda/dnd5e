@@ -6,6 +6,6 @@ public interface Combatant {
 
     int getInitiativeModifier();
 
-    Combatant getInitiativeSource();
+    InitiativeRoller getInitiativeSource();
 
 }

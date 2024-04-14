@@ -53,8 +53,42 @@ class EnemyRepositoryTest extends RepositoryTest {
     void shouldReturnOneCombatant() {
         enemyRepository.save(enemy);
 
-        List<Combatant> allProjectedBy = enemyRepository.findAllProjectedBy();
+        List<Combatant> allProjectedBy = enemyRepository.findAllProjectedByAliveTrue();
         assertThat(allProjectedBy).hasSize(1);
+    }
+
+    @Test
+    void shouldNotReturnDeadEnemy() {
+        EnemyEntity enemy1 = new EnemyEntity();
+        enemy1.setEnemyType(enemyType);
+        enemy1.setAlive(true);
+
+        EnemyEntity enemy2 = new EnemyEntity();
+        enemy2.setEnemyType(enemyType);
+        enemy2.setAlive(false);
+
+        enemyRepository.saveAll(List.of(enemy1, enemy2));
+
+        List<EnemyEntity> allByAliveTrue = enemyRepository.findAllByAliveTrue();
+
+        assertThat(allByAliveTrue).hasSize(1);
+    }
+
+    @Test
+    void shouldNotReturnDeadCombatant() {
+        EnemyEntity enemy1 = new EnemyEntity();
+        enemy1.setEnemyType(enemyType);
+        enemy1.setAlive(true);
+
+        EnemyEntity enemy2 = new EnemyEntity();
+        enemy2.setEnemyType(enemyType);
+        enemy2.setAlive(false);
+
+        enemyRepository.saveAll(List.of(enemy1, enemy2));
+
+        List<Combatant> allProjectedByAliveTrue = enemyRepository.findAllProjectedByAliveTrue();
+
+        assertThat(allProjectedByAliveTrue).hasSize(1);
     }
 
     @Test
@@ -71,7 +105,7 @@ class EnemyRepositoryTest extends RepositoryTest {
                 .findFirst()
                 .get()
                 .getDamageTaken();
-        assertThat(damageTaken).isEqualTo(0);
+        assertThat(damageTaken).isZero();
     }
 
     @Test

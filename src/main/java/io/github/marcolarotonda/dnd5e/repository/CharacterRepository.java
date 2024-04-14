@@ -15,6 +15,6 @@ public interface CharacterRepository extends JpaRepository<CharacterEntity, Inte
     List<CharacterEntity> findAllByAliveTrue();
 
     @Query
-    List<Combatant> findAllProjectedBy();
+    List<Combatant> findAllProjectedByAliveTrue();
 
 }

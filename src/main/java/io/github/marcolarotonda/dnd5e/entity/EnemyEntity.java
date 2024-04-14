@@ -19,7 +19,7 @@ public class EnemyEntity implements Combatant {
     private Integer damageTaken = 0;
     @Basic
     @Column(name = "alive")
-    private Boolean alive = true;
+    private boolean alive = true;
 
 
     public String getName() {
@@ -31,7 +31,7 @@ public class EnemyEntity implements Combatant {
         return this.getEnemyType().getInitiativeModifier();
     }
 
-    public Combatant getInitiativeSource() {
+    public InitiativeRoller getInitiativeSource() {
         return this.getEnemyType();
     }
 }

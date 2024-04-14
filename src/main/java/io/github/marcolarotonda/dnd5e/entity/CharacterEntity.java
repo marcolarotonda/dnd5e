@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import jakarta.persistence.*;
+import lombok.ToString;
 
 import java.util.List;
 
@@ -15,7 +16,8 @@ import java.util.List;
 @Setter
 @Getter
 @Table(name = "`character`")
-public class CharacterEntity implements Combatant {
+@ToString
+public class CharacterEntity implements InitiativeRoller {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
     @Column(name = "id")
@@ -48,14 +50,15 @@ public class CharacterEntity implements Combatant {
     @Column(name = "alive", nullable = false)
     private Boolean alive;
 
-    @OneToMany(mappedBy = "character")
+    @ToString.Exclude
+    @OneToMany(mappedBy = "character", fetch = FetchType.EAGER)
     private List<CharacteristicValueEntity> characteristicValueEntityList;
 
     public int getInitiativeModifier() {
-        return CharacteristicUtils.getCharacteristic(this, CharacteristicEnum.DEXTERITY, CharacteristicTypeEnum.TEMPORARY);
+        return CharacteristicUtils.getModifier(this, CharacteristicEnum.DEXTERITY, CharacteristicTypeEnum.TEMPORARY) + this.getInitiativeBonus();
     }
 
-    public Combatant getInitiativeSource() {
+    public InitiativeRoller getInitiativeSource() {
         return this;
     }
 

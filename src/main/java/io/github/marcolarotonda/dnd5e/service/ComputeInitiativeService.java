@@ -17,10 +17,10 @@ public class ComputeInitiativeService {
     private final EnemyRepository enemyRepository;
     private final DiceService diceService;
 
-    private Set<EnemyTypeEntity> enemyTypes;
     private List<Combatant> combatants;
-    private Map<Combatant, Integer> initiativeModifiers;
-    private Map<Combatant, Integer> initiativeRolls;
+    private List<InitiativeRoller> rollers;
+    private Map<InitiativeRoller, Integer> initiativeModifiers;
+    private Map<InitiativeRoller, Integer> initiativeRolls;
     private Map<Combatant, Integer> initiativeRollsExpanded;
 
     @Getter
@@ -52,13 +52,18 @@ public class ComputeInitiativeService {
      */
     private void setup() {
         List<CharacterEntity> characters = characterRepository.findAllByAliveTrue();
-        List<EnemyEntity> enemies = enemyRepository.findAll();
+        List<EnemyEntity> enemies = enemyRepository.findAllByAliveTrue();
         combatants = new ArrayList<>();
         combatants.addAll(characters);
-        combatants.addAll(enemyTypes);
-        enemyTypes = enemies.stream()
+        combatants.addAll(enemies);
+        Set<EnemyTypeEntity> enemyTypes = enemies.stream()
                 .map(EnemyEntity::getEnemyType)
                 .collect(Collectors.toSet());
+        rollers = new ArrayList<>();
+        rollers.addAll(characters);
+        rollers.addAll(enemyTypes);
+
+
     }
 
     /***
@@ -79,9 +84,12 @@ public class ComputeInitiativeService {
      * @return Map&lt;Combatant, Integer&gt;
      */
     private Map<Combatant, Integer> expandEnemies() {
+        Map<Combatant, InitiativeRoller> mapCombatantToInitiativeRoller = combatants.stream()
+                .collect(Collectors.toMap(combatant -> combatant,
+                        Combatant::getInitiativeSource));
         return combatants.stream()
                 .collect(Collectors.toMap(combatant -> combatant,
-                        combatant -> initiativeRolls.get(combatant.getInitiativeSource())));
+                        combatant -> initiativeRolls.get(mapCombatantToInitiativeRoller.get(combatant))));
     }
 
     /***
@@ -89,7 +97,7 @@ public class ComputeInitiativeService {
      * This method is called after computeInitiativeModifier()
      * @return Map&lt;Combatant, Integer&gt;
      */
-    private Map<Combatant, Integer> rollInitiative() {
+    private Map<InitiativeRoller, Integer> rollInitiative() {
         return initiativeModifiers.entrySet()
                 .stream()
                 .collect(Collectors.toMap(
@@ -101,10 +109,10 @@ public class ComputeInitiativeService {
      * Assign the initiative modifier to each Character and EnemyType
      * @return Map&lt;Combatant, Integer&gt;
      */
-    private Map<Combatant, Integer> computeInitiativeModifier() {
-        return combatants.stream()
+    private Map<InitiativeRoller, Integer> computeInitiativeModifier() {
+        return rollers.stream()
                 .collect(Collectors.toMap(combatant -> combatant,
-                        Combatant::getInitiativeModifier));
+                        InitiativeRoller::getInitiativeModifier));
     }
 
 

@@ -39,13 +39,13 @@ class RetrieveCombatantServiceTest extends ServiceTest {
         combatantList.addAll(characterEntityList);
         combatantList.addAll(enemyEntityList);
 
-        when(characterRepository.findAllProjectedBy()).thenReturn(characterEntityList);
-        when(enemyRepository.findAllProjectedBy()).thenReturn(enemyEntityList);
+        when(characterRepository.findAllProjectedByAliveTrue()).thenReturn(characterEntityList);
+        when(enemyRepository.findAllProjectedByAliveTrue()).thenReturn(enemyEntityList);
 
         List<Combatant> execute = retrieveCombatantService.execute();
 
-        verify(characterRepository, times(1)).findAllProjectedBy();
-        verify(enemyRepository, times(1)).findAllProjectedBy();
+        verify(characterRepository, times(1)).findAllProjectedByAliveTrue();
+        verify(enemyRepository, times(1)).findAllProjectedByAliveTrue();
         assertThat(execute).isEqualTo(combatantList);
 
     }

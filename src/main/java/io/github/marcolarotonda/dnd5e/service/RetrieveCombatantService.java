@@ -22,8 +22,8 @@ public class RetrieveCombatantService {
     }
 
     public List<Combatant> execute() {
-        List<Combatant> combatants = characterRepository.findAllProjectedBy();
-        List<Combatant> combatants1 = enemyRepository.findAllProjectedBy();
+        List<Combatant> combatants = characterRepository.findAllProjectedByAliveTrue();
+        List<Combatant> combatants1 = enemyRepository.findAllProjectedByAliveTrue();
         combatants.addAll(combatants1);
         return combatants;
     }

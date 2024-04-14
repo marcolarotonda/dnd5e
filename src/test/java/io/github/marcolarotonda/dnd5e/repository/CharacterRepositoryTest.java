@@ -25,22 +25,15 @@ class CharacterRepositoryTest extends RepositoryTest {
     private final CharacterRepository characterRepository;
     private final PlayerRepository playerRepository;
     private final RaceRepository raceRepository;
-    private final CharacteristicRepository characteristicRepository;
-    private final CharacteristicValueRepository characteristicValueRepository;
 
 
     @Autowired
     CharacterRepositoryTest(CharacterRepository characterRepository,
                             PlayerRepository playerRepository,
-                            RaceRepository raceRepository,
-                            CharacteristicRepository characteristicRepository,
-                            CharacteristicValueRepository characteristicValueRepository) {
+                            RaceRepository raceRepository) {
         this.characterRepository = characterRepository;
         this.playerRepository = playerRepository;
         this.raceRepository = raceRepository;
-        this.characteristicRepository = characteristicRepository;
-        this.characteristicValueRepository = characteristicValueRepository;
-
     }
 
     @Test
@@ -50,7 +43,7 @@ class CharacterRepositoryTest extends RepositoryTest {
         playerRepository.save(characterEntity.getPlayer());
         characterRepository.save(characterEntity);
 
-        List<Combatant> allProjectedBy = characterRepository.findAllProjectedBy();
+        List<Combatant> allProjectedBy = characterRepository.findAllProjectedByAliveTrue();
         assertThat(allProjectedBy).hasSize(1);
     }
 
@@ -63,6 +56,90 @@ class CharacterRepositoryTest extends RepositoryTest {
 
         List<CharacterEntity> all = characterRepository.findAll();
         assertThat(all).hasSize(1);
+    }
+
+    @Test
+    void shouldNotReturnDeadCharacter() {
+        RaceEntity race = initializeRace();
+
+        PlayerEntity player1 = new PlayerEntity();
+        player1.setName("pl1");
+
+        CharacterEntity character1 = new CharacterEntity();
+        character1.setRace(race);
+        character1.setPlayer(player1);
+        character1.setSpeed(9);
+        character1.setClassArmor(12);
+        character1.setPassivePerception(10);
+        character1.setInitiativeBonus(0);
+        character1.setCompetenceBonus(2);
+        character1.setName("ch1");
+        character1.setAlive(true);
+
+        PlayerEntity player2 = new PlayerEntity();
+        player2.setName("pl2");
+
+        CharacterEntity character2 = new CharacterEntity();
+        character2.setRace(race);
+        character2.setPlayer(player2);
+        character2.setSpeed(9);
+        character2.setClassArmor(12);
+        character2.setPassivePerception(10);
+        character2.setInitiativeBonus(0);
+        character2.setCompetenceBonus(2);
+        character2.setName("ch2");
+        character2.setAlive(false);
+
+
+        raceRepository.save(race);
+        playerRepository.saveAll(List.of(player1, player2));
+        characterRepository.saveAll(List.of(character1, character2));
+
+        List<CharacterEntity> allByAliveTrue = characterRepository.findAllByAliveTrue();
+
+        assertThat(allByAliveTrue).hasSize(1);
+    }
+
+    @Test
+    void shouldNotReturnDeadCombatant() {
+        RaceEntity race = initializeRace();
+
+        PlayerEntity player1 = new PlayerEntity();
+        player1.setName("pl1");
+
+        CharacterEntity character1 = new CharacterEntity();
+        character1.setRace(race);
+        character1.setPlayer(player1);
+        character1.setSpeed(9);
+        character1.setClassArmor(12);
+        character1.setPassivePerception(10);
+        character1.setInitiativeBonus(0);
+        character1.setCompetenceBonus(2);
+        character1.setName("ch1");
+        character1.setAlive(true);
+
+        PlayerEntity player2 = new PlayerEntity();
+        player2.setName("pl2");
+
+        CharacterEntity character2 = new CharacterEntity();
+        character2.setRace(race);
+        character2.setPlayer(player2);
+        character2.setSpeed(9);
+        character2.setClassArmor(12);
+        character2.setPassivePerception(10);
+        character2.setInitiativeBonus(0);
+        character2.setCompetenceBonus(2);
+        character2.setName("ch2");
+        character2.setAlive(false);
+
+
+        raceRepository.save(race);
+        playerRepository.saveAll(List.of(player1, player2));
+        characterRepository.saveAll(List.of(character1, character2));
+
+        List<Combatant> allByAliveTrue = characterRepository.findAllProjectedByAliveTrue();
+
+        assertThat(allByAliveTrue).hasSize(1);
     }
 
     @Test

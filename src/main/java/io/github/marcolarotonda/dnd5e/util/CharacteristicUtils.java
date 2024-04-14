@@ -18,4 +18,16 @@ public class CharacteristicUtils {
                 .orElseThrow(() -> new IllegalStateException(format("Characteristic %s not defined for character %s", characteristic, character)))
                 .getValue(type);
     }
+
+    public static int getModifier(CharacterEntity character, CharacteristicEnum characteristic) {
+        return getModifier(character, characteristic, CharacteristicTypeEnum.TEMPORARY);
+    }
+
+    public static int getModifier(CharacterEntity character, CharacteristicEnum characteristic, CharacteristicTypeEnum type) {
+        return computeModifier(getCharacteristic(character, characteristic, type));
+    }
+
+    public static int computeModifier(int value) {
+        return (int) Math.floor((value - 10) / 2.0);
+    }
 }
