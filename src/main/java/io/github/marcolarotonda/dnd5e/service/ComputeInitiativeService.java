@@ -2,6 +2,7 @@ package io.github.marcolarotonda.dnd5e.service;
 
 import io.github.marcolarotonda.dicerollerutil.model.RollOption;
 import io.github.marcolarotonda.dnd5e.entity.*;
+import io.github.marcolarotonda.dnd5e.model.InitiativeItem;
 import io.github.marcolarotonda.dnd5e.repository.CharacterRepository;
 import io.github.marcolarotonda.dnd5e.repository.EnemyRepository;
 import lombok.Getter;
@@ -9,7 +10,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 @Service
 public class ComputeInitiativeService {
@@ -22,9 +25,10 @@ public class ComputeInitiativeService {
     private Map<InitiativeRoller, Integer> initiativeModifiers;
     private Map<InitiativeRoller, Integer> initiativeRolls;
     private Map<Combatant, Integer> initiativeRollsExpanded;
+    private List<Map.Entry<Combatant, Integer>> initiativeAsMapEntries;
 
     @Getter
-    private List<Map.Entry<Combatant, Integer>> initiativeOrder;
+    List<InitiativeItem> initiative;
 
 
     @Autowired
@@ -36,7 +40,7 @@ public class ComputeInitiativeService {
         this.diceService = diceService;
     }
 
-    /***
+    /**
      * Calls all the methods needed to calculate initiative
      */
     public void execute() {
@@ -44,10 +48,12 @@ public class ComputeInitiativeService {
         initiativeModifiers = computeInitiativeModifier();
         initiativeRolls = rollInitiative();
         initiativeRollsExpanded = expandEnemies();
-        initiativeOrder = assignInitiativeOrder();
+        initiativeAsMapEntries = assignInitiativeOrder();
+        initiative = getCalculatedInitiative();
+
     }
 
-    /***
+    /**
      * Create all the objects needed to calculate initiative
      */
     private void setup() {
@@ -66,7 +72,7 @@ public class ComputeInitiativeService {
 
     }
 
-    /***
+    /**
      * Create a list that represents the initiative order. The first element of the list is the Combatant with the
      * highest initiative. The order is not relevant for Combatant with identical initiative. This method is called after
      * expandEnemies()
@@ -78,7 +84,7 @@ public class ComputeInitiativeService {
         return initiativeOrderLocal;
     }
 
-    /***
+    /**
      * Assign the initiative roll to each Character and Enemy.
      * This method is called after rollInitiative()
      * @return Map&lt;Combatant, Integer&gt;
@@ -92,7 +98,7 @@ public class ComputeInitiativeService {
                         combatant -> initiativeRolls.get(mapCombatantToInitiativeRoller.get(combatant))));
     }
 
-    /***
+    /**
      * Perform the initiative roll for each Character and EnemyType.
      * This method is called after computeInitiativeModifier()
      * @return Map&lt;Combatant, Integer&gt;
@@ -105,7 +111,7 @@ public class ComputeInitiativeService {
                         entry -> diceService.rollGetTotal(RollOption.builder().modifier(entry.getValue()).build())));
     }
 
-    /***
+    /**
      * Assign the initiative modifier to each Character and EnemyType
      * @return Map&lt;Combatant, Integer&gt;
      */
@@ -113,6 +119,32 @@ public class ComputeInitiativeService {
         return rollers.stream()
                 .collect(Collectors.toMap(combatant -> combatant,
                         InitiativeRoller::getInitiativeModifier));
+    }
+
+    /**
+     * Given a list List&lt;Map.Entry&lt;Combatant, Integer&gt;&gt;, each element of this list is transformed into an InitiativeItem
+     * object.
+     *
+     * @return: Initiative order represented as List&lt;InitiativeItem&gt;
+     */
+    private List<InitiativeItem> getCalculatedInitiative() {
+
+        Function<Integer, InitiativeItem> getInitiativeItem = i -> {
+            Map.Entry<Combatant, Integer> entry = initiativeAsMapEntries.get(i);
+            return InitiativeItem.builder()
+                    .name(entry.getKey().getName())
+                    .description("")
+                    .damageTaken(0)
+                    .initiativeValue(entry.getValue())
+                    .build();
+        };
+
+        initiative = IntStream.range(0, initiativeAsMapEntries.size())
+                .boxed()
+                .map(getInitiativeItem)
+                .collect(Collectors.toList());
+
+        return initiative;
     }
 
 
