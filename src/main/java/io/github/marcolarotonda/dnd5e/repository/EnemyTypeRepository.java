@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface EnemyTypeRepository extends JpaRepository<EnemyTypeEntity, Integer> {
@@ -19,4 +20,7 @@ public interface EnemyTypeRepository extends JpaRepository<EnemyTypeEntity, Inte
                             and `enemy`.alive = 1)
              """, nativeQuery = true)
     List<EnemyTypeEntity> findDistinctTypes();
+
+    @Query
+    Optional<EnemyTypeEntity> findByNameAndInitiativeModifier(String name, int initiativeModifier);
 }

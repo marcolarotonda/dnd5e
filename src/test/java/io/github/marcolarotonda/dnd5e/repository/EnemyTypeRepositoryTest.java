@@ -93,4 +93,16 @@ class EnemyTypeRepositoryTest extends RepositoryTest {
 
     }
 
+    @Test
+    void shouldReturnEnemyTypeByNameAndInitiative() {
+        enemyType.setName("pippo");
+        enemyType.setInitiativeModifier(2);
+
+        enemyTypeRepository.save(enemyType);
+
+        EnemyTypeEntity pippo = enemyTypeRepository.findByNameAndInitiativeModifier("pippo", 2).get();
+
+        assertThat(enemyType).isEqualTo(pippo);
+    }
+
 }
