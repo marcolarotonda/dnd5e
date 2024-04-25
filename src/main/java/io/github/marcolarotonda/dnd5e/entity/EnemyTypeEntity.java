@@ -21,8 +21,4 @@ public class EnemyTypeEntity implements InitiativeRoller {
     @Column(name = "`initiative_modifier`")
     private int initiativeModifier = 0;
 
-    public InitiativeRoller getInitiativeSource() {
-        return this;
-    }
-
 }
