@@ -133,7 +133,7 @@ public class ComputeInitiativeService {
             Map.Entry<Combatant, Integer> entry = initiativeAsMapEntries.get(i);
             return InitiativeItem.builder()
                     .name(entry.getKey().getName())
-                    .description("")
+                    .tag("")
                     .damageTaken(0)
                     .initiativeValue(entry.getValue())
                     .build();

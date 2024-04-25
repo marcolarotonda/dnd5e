@@ -9,6 +9,6 @@ public class InitiativeItem {
 
     private final String name;
     private int initiativeValue;
-    private String description = ""; //TODO
+    private String tag;
     private int damageTaken;
 }

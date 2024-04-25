@@ -8,6 +8,7 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.test.context.jdbc.Sql;
 
 import java.util.List;
+import java.util.Optional;
 
 import static io.github.marcolarotonda.utlis.EntityInitializerUtils.*;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -220,5 +221,25 @@ class CharacterRepositoryTest extends RepositoryTest {
 
         assertThatThrownBy(() -> characterRepository.save(characterEntity)).isInstanceOf(DataIntegrityViolationException.class);
     }
+
+    @Test
+    void shouldReturnNullTag() {
+        CharacterEntity characterEntity = initializeCharacter();
+        Optional<String> tag = characterEntity.getTag();
+        assertThat(tag).isEmpty();
+    }
+
+    @Test
+    void shouldSaveCharacterWithoutTag() {
+        CharacterEntity character = initializeCharacter();
+        raceRepository.save(character.getRace());
+        playerRepository.save(character.getPlayer());
+        characterRepository.save(character);
+
+        CharacterEntity returned = characterRepository.findById(character.getId()).get();
+        assertThat(returned.getTag()).isEmpty();
+    }
+
+
 
 }

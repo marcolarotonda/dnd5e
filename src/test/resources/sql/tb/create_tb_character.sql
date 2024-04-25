@@ -9,6 +9,7 @@ CREATE TABLE `dnd5e_test`.`character` (
   `passive_perception` int(10) unsigned NOT NULL,
   `class_armor` int(10) unsigned NOT NULL,
   `alive` tinyint(1) NOT NULL DEFAULT 1,
+  `tag` varchar(20) DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `character_UN` (`player_id`),
   KEY `character_FK_3` (`race_id`),

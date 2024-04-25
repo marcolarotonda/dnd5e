@@ -3,6 +3,8 @@ package io.github.marcolarotonda.dnd5e.entity;
 import jakarta.persistence.*;
 import lombok.Data;
 
+import java.util.Optional;
+
 @Entity
 @Data
 @Table(name = "`enemy`")
@@ -20,7 +22,13 @@ public class EnemyEntity implements Combatant {
     @Basic
     @Column(name = "alive")
     private boolean alive = true;
+    @Basic
+    @Column(name="tag")
+    private String tag;
 
+    public Optional<String> getTag() {
+        return Optional.ofNullable(tag);
+    }
 
     public String getName() {
         return this.getEnemyType().getName();
