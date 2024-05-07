@@ -2,7 +2,7 @@ package io.github.marcolarotonda.dnd5e.service;
 
 import io.github.marcolarotonda.dicerollerutil.model.RollOption;
 import io.github.marcolarotonda.dnd5e.entity.*;
-import io.github.marcolarotonda.dnd5e.model.InitiativeItem;
+import io.github.marcolarotonda.dnd5e.entity.InitiativeItemEntity;
 import io.github.marcolarotonda.dnd5e.repository.CharacterRepository;
 import io.github.marcolarotonda.dnd5e.repository.EnemyRepository;
 import lombok.Getter;
@@ -28,7 +28,7 @@ public class ComputeInitiativeService {
     private List<Map.Entry<Combatant, Integer>> initiativeAsMapEntries;
 
     @Getter
-    List<InitiativeItem> initiative;
+    List<InitiativeItemEntity> initiative;
 
 
     @Autowired
@@ -127,11 +127,11 @@ public class ComputeInitiativeService {
      *
      * @return: Initiative order represented as List&lt;InitiativeItem&gt;
      */
-    private List<InitiativeItem> getCalculatedInitiative() {
+    private List<InitiativeItemEntity> getCalculatedInitiative() {
 
-        Function<Integer, InitiativeItem> getInitiativeItem = i -> {
+        Function<Integer, InitiativeItemEntity> getInitiativeItem = i -> {
             Map.Entry<Combatant, Integer> entry = initiativeAsMapEntries.get(i);
-            return InitiativeItem.builder()
+            return InitiativeItemEntity.builder()
                     .name(entry.getKey().getName())
                     .tag("")
                     .damageTaken(0)

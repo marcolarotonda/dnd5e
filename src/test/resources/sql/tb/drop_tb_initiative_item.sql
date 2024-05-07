@@ -1,0 +1,1 @@
+DROP TABLE `dnd5e_test`.`initiative_item`;

@@ -1,15 +1,15 @@
-package io.github.marcolarotonda.dnd5e.model;
+package io.github.marcolarotonda.dnd5e.entity;
 
 import io.github.marcolarotonda.dnd5e.UnitTest;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-class InitiativeItemTest extends UnitTest {
+class InitiativeItemEntityTest extends UnitTest {
 
     @Test
     void shouldSetDefaultTag() {
-        InitiativeItem build = InitiativeItem.builder().build();
+        InitiativeItemEntity build = InitiativeItemEntity.builder().build();
         assertThat(build.getTag()).isNull();
     }
 
