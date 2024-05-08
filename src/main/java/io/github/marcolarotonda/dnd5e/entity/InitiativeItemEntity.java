@@ -1,13 +1,17 @@
 package io.github.marcolarotonda.dnd5e.entity;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Builder
 @Data
 @Entity
 @Table(name = "`initiative_item`")
+@AllArgsConstructor
+@NoArgsConstructor
 public class InitiativeItemEntity {
 
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -16,7 +20,7 @@ public class InitiativeItemEntity {
     private int id;
     @Basic
     @Column(name = "name", nullable = false)
-    private final String name;
+    private String name;
     @Basic
     @Column(name = "initiative_value", nullable = false)
     private int initiativeValue;
